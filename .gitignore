@@ -11,6 +11,8 @@
 # generated files
 bin/
 gen/
+out/
+build/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -19,16 +21,25 @@ local.properties
 .classpath
 .project
 
-# Android Studio
-.idea/
-.gradle
-/*/local.properties
-/*/out
-/*/*/build
-/*/*/production
+# Linux / Mac db file
+.DS_Store
+.directory
+
+# IDEA/Android Studio project files, because
+# the project can be imported from settings.gradle
+.idea
 *.iml
-*.iws
+
+# Old-style IDEA project files
 *.ipr
-*~
-*.swp
+*.iws
+
+# Local IDEA workspace
+.idea/workspace.xml
+
+# Gradle cache
+.gradle
+
+# Sandbox stuff
+_sandbox
 
