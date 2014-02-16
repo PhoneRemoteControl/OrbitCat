@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PhoneRemoteControl</string>
+    <string name="title_activity_main">Menu Principal</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="btn_state">Etat du serveur :</string>
+    <string name="server_listen_port">Port d\'écoute du serveur :</string>
+
+    <!-- HTML -->
+    <string name="sms_list">Liste des SMS</string>
+    <string name="sms_nb_message">Nombre de messages</string>
+    <string name="sms_recipient_name">Nom</string>
+    <string name="sms_recipient_phone_number">Numéro de téléphone</string>
+</resources>
