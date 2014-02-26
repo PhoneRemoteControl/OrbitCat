@@ -33,6 +33,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import org.phoneremotecontrol.app.http.HttpServer;
+import org.phoneremotecontrol.app.sms.SMSHttpWorker;
+
 import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity {
@@ -93,7 +96,11 @@ public class MainActivity extends ActionBarActivity {
             portEditText = (EditText) rootView.findViewById(R.id.edit_port);
             Switch switchState = (Switch) rootView.findViewById(R.id.btn_state);
 
-            _httpServer = new HttpServer(Integer.parseInt(portEditText.getText().toString()), getActivity().getApplicationContext());
+            SMSHttpWorker smsWorker = new SMSHttpWorker(getActivity().getApplicationContext(), "/sms");
+
+            _httpServer = new HttpServer(Integer.parseInt(portEditText.getText().toString()),
+                    getActivity().getApplicationContext().getCacheDir());
+            _httpServer.addWorker(smsWorker);
             switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -102,7 +109,10 @@ public class MainActivity extends ActionBarActivity {
                             if (_httpServer.isAlive()) {
                                 _httpServer.stop();
                             }
-                            _httpServer = new HttpServer(Integer.parseInt(portEditText.getText().toString()), getActivity().getApplicationContext());
+                            SMSHttpWorker smsWorker = new SMSHttpWorker(getActivity().getApplicationContext(), "/sms");
+                            _httpServer = new HttpServer(Integer.parseInt(portEditText.getText().toString()),
+                                    getActivity().getApplicationContext().getCacheDir());
+                            _httpServer.addWorker(smsWorker);
                             _httpServer.start();
                         } catch (IOException e) {
                             e.printStackTrace();

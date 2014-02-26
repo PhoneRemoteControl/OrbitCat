@@ -1,8 +1,6 @@
 /*
  * This file is part of the PhoneRemoteControl application.
  *
- * Copyright (C) 2014 Florent Rochette (Florent38) <florent dot rochette at gmail dot com>
- * Copyright (C) 2014 Pierre-Antoine Forestier (Freakfonk) <freakfonk at gmail dot com>
  * Copyright (C) 2014 Yoann Laissus (Arakmar) <yoann dot laissus at gmail dot com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,28 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package org.phoneremotecontrol.app.http;
 
-apply plugin: 'android'
+import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 
-android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.2"
-
-    defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-}
-
-dependencies {
-    compile 'com.android.support:appcompat-v7:+'
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+public interface HttpWorker {
+    public abstract String getLocation();
+    public abstract Response serve(IHTTPSession session);
 }
