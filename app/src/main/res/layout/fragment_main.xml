@@ -40,4 +40,18 @@
             android:layout_below="@+id/btn_state"
             android:layout_toRightOf="@+id/textView" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/available_interfaces"
+        android:id="@+id/textView2" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rb_group">
+
+    </RadioGroup>
 </LinearLayout>

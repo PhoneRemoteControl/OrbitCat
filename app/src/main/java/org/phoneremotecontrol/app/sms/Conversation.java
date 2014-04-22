@@ -21,6 +21,8 @@
 
 package org.phoneremotecontrol.app.sms;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.phoneremotecontrol.app.contacts.Contact;
 
 public class Conversation {
@@ -36,6 +38,14 @@ public class Conversation {
 
     public String toString() {
         return "[threadId = " + getThreadId() + ", msgCount = " + getMsgCount() + ", contact = " + getContact() + "]";
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("threadId", _threadId);
+        obj.put("msgCount", _msgCount);
+        obj.put("contact", _contact.toJSON());
+        return obj;
     }
 
     public long getThreadId() {

@@ -20,6 +20,8 @@ package org.phoneremotecontrol.app.sms;
 
 import android.content.Context;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.phoneremotecontrol.app.R;
 import org.phoneremotecontrol.app.http.HttpWorker;
 
@@ -44,25 +46,20 @@ public class SMSHttpWorker implements HttpWorker {
 
     @Override
     public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
-        StringBuilder sb = new StringBuilder();
         List<Conversation> list = SMSUtils.getSMSThreadIds(_context);
-        sb.append("<html><body><h1>" + _context.getString(R.string.sms_list) +"</h1>\n");
-
-        sb.append("<ul>");
+        JSONArray conversationArray = new JSONArray();
 
         for (Conversation c : list) {
-            sb.append("<li>").append(c.getThreadId()).append("<ul><li>").append(_context.getString(R.string.sms_nb_message)).append(" : ").append(c.getMsgCount()).append("</li>");
-            sb.append("<li>" + _context.getString(R.string.sms_recipient_phone_number) + " : " + c.getContact().getPhoneNumber() + "</li>");
-            if (c.getContact().getDisplayName() != null) {
-                sb.append("<li>" + _context.getString(R.string.sms_recipient_name) + " : " + c.getContact().getDisplayName() + "</li>");
+            try {
+                conversationArray.put(c.toJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            sb.append("</ul>");
         }
 
-        sb.append("</ul>");
-        sb.append("</body></html>\n");
-
-        String msg = sb.toString();
+        String msg = conversationArray.toString();
+        Response response = new Response(msg);
+        response.setMimeType("application/json");
         return new Response(msg);
     }
 

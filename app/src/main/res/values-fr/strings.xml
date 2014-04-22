@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PhoneRemoteControl</string>
+    <string name="app_name">OrbitCat</string>
     <string name="title_activity_main">Menu Principal</string>
     <string name="action_settings">Paramètres</string>
     <string name="btn_state">Etat du serveur :</string>
     <string name="server_listen_port">Port d\'écoute du serveur :</string>
+    <string name="available_interfaces">Interfaces réseau disponibles :</string>
+    <string name="http_service_notification">http_service_notification</string>
+    <string name="notification_content">Cliquez pour configurer</string>
+    <string name="notification_title">OrbitCat actif</string>
 
     <!-- HTML -->
     <string name="sms_list">Liste des SMS</string>

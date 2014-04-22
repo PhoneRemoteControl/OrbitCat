@@ -41,6 +41,12 @@ public class HttpServer extends SimpleWebServer {
         Log.d(TAG, "Initialisation of nanohttpd on port " + port + " with document root : " + root);
     }
 
+    public HttpServer(int port, String host, File root) {
+        super(host, port, root, true);
+        _workerList = new ArrayList<HttpWorker>();
+        Log.d(TAG, "Initialisation of nanohttpd on host : " + host + "and port " + port + " with document root : " + root);
+    }
+
     public boolean addWorker(HttpWorker worker) {
         if (worker != null && getWorkerForIdenticalLocation(worker.getLocation()) == null) {
             _workerList.add(worker);
@@ -96,21 +102,8 @@ public class HttpServer extends SimpleWebServer {
             Log.d(TAG, "Found worker for request " + uri + " : " + worker);
             return worker.serve(session);
         }
-        String msg;
 
-        msg = "<html><body><h1>Hello server</h1>\n";
-        Map<String, String> parms = session.getParms();
-        if (parms.get("username") == null)
-            msg +=
-                    "<form action='?' method='get'>\n" +
-                            "  <p>Your name: <input type='text' name='username'></p>\n" +
-                            "</form>\n";
-        else
-            msg += "<p>Hello, " + parms.get("username") + "!</p>";
-
-        msg += "</body></html>\n";
-
-        return new NanoHTTPD.Response(msg);
+        return super.serve(session);
     }
 
 }

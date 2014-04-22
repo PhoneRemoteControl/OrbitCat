@@ -1,8 +1,6 @@
 /*
  * This file is part of the PhoneRemoteControl application.
  *
- * Copyright (C) 2014 Florent Rochette (Florent38) <florent dot rochette at gmail dot com>
- * Copyright (C) 2014 Pierre-Antoine Forestier (Freakfonk) <freakfonk at gmail dot com>
  * Copyright (C) 2014 Yoann Laissus (Arakmar) <yoann dot laissus at gmail dot com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-apply plugin: 'android'
+package org.phoneremotecontrol.app.http;
 
-android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 
-    defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+public class HttpServerServiceStopReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        context.stopService(new Intent(context, HttpServerService.class));
     }
-    buildTypes {
-        release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
-}
-
-dependencies {
-    compile 'com.android.support:appcompat-v7:+'
-    compile fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 }

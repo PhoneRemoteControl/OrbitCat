@@ -21,6 +21,9 @@
 
 package org.phoneremotecontrol.app.contacts;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Contact {
     private String _phoneNumber;
     private String _displayName;
@@ -40,5 +43,12 @@ public class Contact {
 
     public String toString() {
         return "[phoneNumber = " + _phoneNumber + ", displayName  = " + _displayName + "]";
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("phoneNumber", _phoneNumber);
+        obj.put("displayName", _displayName);
+        return obj;
     }
 }
