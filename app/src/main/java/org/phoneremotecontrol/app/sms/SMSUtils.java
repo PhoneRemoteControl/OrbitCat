@@ -24,21 +24,25 @@ package org.phoneremotecontrol.app.sms;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Telephony;
 import android.provider.Telephony.Threads;
+import android.text.format.DateUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 import org.phoneremotecontrol.app.contacts.Contact;
 import org.phoneremotecontrol.app.contacts.ContactUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SMSUtils {
 
     private static String TAG = "SMSUtils";
-    private static String URI_CANNONICAL_ADDRESSES = "content://mms-sms/canonical-addresses";
     private static String URI_CANNONICAL_ADDRESS = "content://mms-sms/canonical-address";
     private static String URI_CONVERSATIONS = "content://mms-sms/conversations?simple=true";
+    private static String URI_INBOX = "content://mms-sms/inbox";
 
     public static List<Conversation> getSMSThreadIds(Context context) {
 
@@ -63,6 +67,62 @@ public class SMSUtils {
 
         return list;
     }
+
+    public static List<Message> getMessageForThread(long threadId, int number, Context context) {
+        String uri = "content://sms/conversations/" + threadId;
+        final String[] projection = new String[]{Telephony.Sms.DATE, Telephony.Sms.BODY, Telephony.Sms.TYPE, Telephony.Sms.SEEN};
+        Cursor cursor = context.getContentResolver().query(Uri.parse(uri), projection, null, null, null);
+
+        List<Message> msgList = new ArrayList<Message>();
+        int cpt = 0;
+
+        while(cursor.moveToNext() && cpt < number) {
+            Date datea = new Date(cursor.getLong(0)*1000);
+            Log.d(TAG, cursor.getString(0) + " " + formatTimeStampString(context, cursor.getLong(0), true) + " " + cursor.getString(2));
+            String date = cursor.getString(0);
+            String body = cursor.getString(1);
+            Message message = new Message(date, body);
+            msgList.add(message);
+            cpt++;
+        }
+        cursor.close();
+
+        return msgList;
+    }
+
+    // Taken from CyanogenMod's android_packages_apps_Mms
+    public static String formatTimeStampString(Context context, long when, boolean fullFormat) {
+        Time then = new Time();
+        then.set(when);
+        Time now = new Time();
+        now.setToNow();
+
+        // Basic settings for formatDateTime() we want for all cases.
+        int format_flags = DateUtils.FORMAT_NO_NOON_MIDNIGHT |
+                DateUtils.FORMAT_ABBREV_ALL |
+                DateUtils.FORMAT_CAP_AMPM;
+
+        // If the message is from a different year, show the date and year.
+        if (then.year != now.year) {
+            format_flags |= DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_SHOW_DATE;
+        } else if (then.yearDay != now.yearDay) {
+            // If it is from a different day than today, show only the date.
+            format_flags |= DateUtils.FORMAT_SHOW_DATE;
+        } else {
+            // Otherwise, if the message is from today, show the time.
+            format_flags |= DateUtils.FORMAT_SHOW_TIME;
+        }
+
+        // If the caller has asked for full details, make sure to show the date
+        // and time no matter what we've determined above (but still make showing
+        // the year only happen if it is a different year from today).
+        if (fullFormat) {
+            format_flags |= (DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
+        }
+
+        return DateUtils.formatDateTime(context, when, format_flags);
+    }
+
 
     public static String getNumberForId(long recipientId, Context context) {
         Cursor cursor = context.getContentResolver().query(Uri.parse(URI_CANNONICAL_ADDRESS + "/" + recipientId), null, null, null, null);
