@@ -23,6 +23,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Binder;
@@ -35,6 +36,7 @@ import org.phoneremotecontrol.app.MainActivity;
 import org.phoneremotecontrol.app.R;
 import org.phoneremotecontrol.app.http.HttpServer;
 import org.phoneremotecontrol.app.sms.SMSHttpWorker;
+import org.phoneremotecontrol.app.sms.SMSUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,15 +46,24 @@ import java.io.OutputStream;
 
 public class HttpServerService extends Service {
     public static final String TAG = "HttpServerService";
+    private static final String ROOT_DIR_SUFFIX = "web";
     private File _rootPath;
 
     private HttpServer _httpServer;
     private NotificationManager _notificationManager;
     private final IBinder _binder = new LocalBinder();
 
+    public static File getRootDir(Context context) {
+        return new File(context.getCacheDir() + "/" + ROOT_DIR_SUFFIX);
+    }
+
+    public File getRootDir() {
+        return HttpServerService.getRootDir(this);
+    }
+
     @Override
     public void onCreate() {
-        _rootPath = new File(getCacheDir().getPath() + "/web");
+        _rootPath = getRootDir();
         _notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         showNotification();
 
@@ -74,12 +85,14 @@ public class HttpServerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "Starting the service...");
-        copyAssetFolder(getAssets(), "web", _rootPath.getPath());
+
+
+        copyAssetFolder(getAssets(), ROOT_DIR_SUFFIX, _rootPath.getPath());
 
         SMSHttpWorker smsWorker = new SMSHttpWorker(getApplicationContext(), "/sms");
         int port = intent.getIntExtra("http_port", 9999);
         String host = intent.getStringExtra("http_host");
-        _httpServer = new HttpServer(port, host, getApplicationContext().getCacheDir());
+        _httpServer = new HttpServer(port, host, getRootDir());
         _httpServer.addWorker(smsWorker);
         try {
             _httpServer.start();
