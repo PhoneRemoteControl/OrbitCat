@@ -4,10 +4,7 @@ $(document).ready(function() {
         url: jsonUrl
     })
     .done(function( data ) {
-        var convList = JSON.parse(data);
-        console.log(convList);
-            
-        updateSidebar(convList);
+        updateSidebar(data);
     });
 });
 
@@ -18,26 +15,42 @@ function updateSidebar(convList) {
         var convView = createConvView(convObject);
         $("#sidebar").append(convView);
     }
-    $("#sidebar > .list-group-item:first").addClass('active');
+
+    selectConversation($("#sidebar > .list-group-item:first"));
     
-    $('.list-group-item').on('click',function(e){
-        var previous = $(this).closest(".list-group").children(".active");
+    $('.list-group-item').on('click', function(e) {
+        selectConversation($(e.target));
+    });
+}
+
+function selectConversation(newConv) {
+        var previous = newConv.closest(".list-group").children(".active");
+        $("img", previous).width("48");
+        $("p", previous).css("display", "none");
         previous.removeClass('active'); // previous list-item
         
-        $(e.target).closest(".list-group-item").addClass('active'); // activated list-item
-    });
+        var selected = $(newConv).closest(".list-group-item");
+        selected.addClass('active'); // activated list-item
+        $("img", selected).width("64");
+        $("p", selected).css("display", "block");
 }
 
 function createConvView(conv) {
     var newDiv = '<a href="#" class="list-group-item" >';
-    var title = '<h4 class="list-group-item-heading">';
-    if (conv.contact.displayName != null) {
-        title += conv.contact.displayName + ' (' + conv.contact.phoneNumber + ')';
+    var icon = "";
+    if (conv.imagePath != null) {
+        icon = '<div class="contactIcon"><img src="' + conv.imagePath + '" width="48"/></div>'
     } else {
-        title += conv.contact.phoneNumber;
+        icon = '<div class="contactIcon"><img src="../img/unknown-contact.png" width="48"/></div>'
     }
+    var title = '<div class="contactText"><h4 class="list-group-item-heading">';
+    title += conv.contact.displayName;
     title += '</h4>';
-    var subtitle = '<p class="list-group-item-text">' + conv.msgCount + ' messages</p>';
-    newDiv += title + subtitle + '</a>';
+    var subtitle = '';
+    if (conv.contact.displayName != conv.contact.phoneNumber) {
+        subtitle += '<p class="list-group-item-text">' + conv.contact.phoneNumber + '</p>';
+    }
+    subtitle += '<p class="list-group-item-text">' + conv.msgCount + ' messages</p></div>';
+    newDiv += icon + title + subtitle + '</a>';
     return newDiv;
 }

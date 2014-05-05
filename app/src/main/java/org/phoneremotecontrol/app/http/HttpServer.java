@@ -74,7 +74,6 @@ public class HttpServer extends SimpleWebServer {
                 if (splittedWorker.length == i) {
                     boolean match = true;
                     for (int j = 0; j < splittedWorker.length; j++) {
-                        Log.d(TAG, "Comparing " + splittedWorker[j] + " and " + splittedLocation[j]);
                         if (!splittedWorker[j].equals(splittedLocation[j])) {
                             match = false;
                             break;

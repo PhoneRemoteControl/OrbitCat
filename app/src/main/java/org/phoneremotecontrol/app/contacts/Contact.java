@@ -25,12 +25,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Contact {
+    private long _id;
     private String _phoneNumber;
     private String _displayName;
+    private String _photoUri;
+
+    public Contact(long id, String phoneNumber, String displayName) {
+        _id = id;
+        _phoneNumber = phoneNumber;
+        _displayName = displayName;
+    }
 
     public Contact(String phoneNumber, String displayName) {
         _phoneNumber = phoneNumber;
         _displayName = displayName;
+    }
+
+    public long getId() {
+        return _id;
     }
 
     public String getPhoneNumber() {
@@ -39,6 +51,15 @@ public class Contact {
 
     public String getDisplayName() {
         return _displayName;
+    }
+
+
+    public String getPhotoUri() {
+        return _photoUri;
+    }
+
+    public void setPhotoUri(String photoPath) {
+        this._photoUri = photoPath;
     }
 
     public String toString() {

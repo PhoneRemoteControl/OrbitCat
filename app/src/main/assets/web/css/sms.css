@@ -61,6 +61,27 @@ body {
     padding-top: 10px;
 }
 
+.contactIcon {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.contactIcon img {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.contactText {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.contactText p {
+    display: none;
+}
+
 .container1 > div, .container2 > div, .container3 > div {
     width: 6px;
     height: 6px;

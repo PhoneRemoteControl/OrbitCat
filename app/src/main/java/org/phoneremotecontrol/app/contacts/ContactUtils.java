@@ -21,26 +21,48 @@
 
 package org.phoneremotecontrol.app.contacts;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class ContactUtils {
     private static String TAG = "ContactUtils";
 
     public static Contact getContactFromPhoneNumber(String phoneNumber, Context context) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-        final String[] contactNameProjection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-        Cursor cursor = context.getContentResolver().query(uri, contactNameProjection, null, null, null);
+        Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+        final String[] contactProjection = new String[] {PhoneLookup._ID, PhoneLookup.DISPLAY_NAME};
 
-        Contact c = null;
-        if (cursor.moveToNext()) {
-            c = new Contact(phoneNumber, cursor.getString(0));
-        } else {
-            c = new Contact(phoneNumber, null);
+        Cursor c = context.getContentResolver().query(contactUri, contactProjection, null, null, null);
+        Contact contact = new Contact(phoneNumber, phoneNumber);
+
+        try {
+            if (c.moveToFirst()) {
+                long id = c.getLong(c.getColumnIndex(PhoneLookup._ID));
+                String name = c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME));
+
+                contact = new Contact(id, phoneNumber, name);
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Unable to retrieve contact with phone number " + phoneNumber);
+        } finally {
+            c.close();
         }
-        cursor.close();
-        return c;
+
+        return contact;
+    }
+
+    public static InputStream getContactPhotoStream(Contact contact, Context context) {
+        if (contact == null) {
+            return null;
+        }
+        Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, contact.getId());
+        return Contacts.openContactPhotoInputStream(context.getContentResolver(), contactUri);
     }
 }

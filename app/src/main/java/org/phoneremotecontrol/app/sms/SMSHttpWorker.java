@@ -19,24 +19,40 @@
 package org.phoneremotecontrol.app.sms;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.phoneremotecontrol.app.R;
+import org.phoneremotecontrol.app.contacts.Contact;
+import org.phoneremotecontrol.app.contacts.ContactException;
+import org.phoneremotecontrol.app.contacts.ContactUtils;
+import org.phoneremotecontrol.app.http.HttpServerService;
 import org.phoneremotecontrol.app.http.HttpWorker;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 
 public class SMSHttpWorker implements HttpWorker {
+    private static final String TAG = "SMSHttpWorker";
     private Context _context;
     private String _location;
+    private File _cacheDir;
+    private String _cacheLocation;
 
     public SMSHttpWorker(Context context, String location) {
         _context = context;
         _location = location;
+        initCache();
     }
 
     @Override
@@ -44,23 +60,95 @@ public class SMSHttpWorker implements HttpWorker {
         return _location;
     }
 
-    @Override
-    public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+    private void initCache() {
+        _cacheLocation = "/workers" + _location;
+        _cacheDir = new File(HttpServerService.getRootDir(_context), _cacheLocation);
+        _cacheDir.mkdirs();
+        Log.d(TAG, "Init cache for " + _location + " on " + _cacheDir + " at location " + _cacheLocation);
+    }
+
+    private Response serveConversations() {
+        Log.d(TAG, "Serving conversations ...");
         List<Conversation> list = SMSUtils.getSMSThreadIds(_context);
         JSONArray conversationArray = new JSONArray();
 
+        File imagePath = new File(_cacheDir, "img");
+        if (!imagePath.isDirectory()) {
+            imagePath.mkdir();
+        }
+
         for (Conversation c : list) {
+            File contactImage = null;
             try {
-                conversationArray.put(c.toJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
+                contactImage = copyContactImage(c.getContact(), imagePath);
+            } catch (ContactException e) {
+                Log.d(TAG, "Fail to copy contact image for " + e.getMessage());
             }
+
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = c.toJSON();
+
+                if (contactImage != null) {
+                    jsonObject.put("imagePath", _cacheLocation + "/img/" + contactImage.getName());
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to serialize JSON for " + c);
+            }
+
+            conversationArray.put(jsonObject);
         }
 
         String msg = conversationArray.toString();
         Response response = new Response(msg);
         response.setMimeType("application/json");
-        return new Response(msg);
+        return response;
+    }
+
+    private Response serveMessages(long id) {
+        Log.d(TAG, "Not implemented yet. Serve messages for " + id);
+        return new Response("");
+    }
+
+    @Override
+    public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+        String[] splittedLocation = session.getUri().split("/", 0);
+        if (splittedLocation.length == 2) {
+            return serveConversations();
+        } else if (splittedLocation.length == 3) {
+            long id = Long.parseLong(splittedLocation[2]);
+            return serveMessages(id);
+        } else {
+            Log.d(TAG, "Incorrect URL");
+        }
+
+        return new Response("");
+    }
+
+    private File copyContactImage(Contact c, File f) throws ContactException {
+        File outFile;
+        try {
+            outFile = new File(f, c.getId() + ".jpg");
+            Log.e(TAG, f.getPath() + " " + outFile);
+            InputStream in = ContactUtils.getContactPhotoStream(c, _context);
+            if (in == null) {
+                throw new ContactException("No input stream for " + c);
+            }
+
+            OutputStream out = new FileOutputStream(outFile);
+            copyFile(in, out);
+        } catch (Exception e) {
+            throw new ContactException("Unable to copy contact image to " + f, e);
+        }
+        return outFile;
+    }
+
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 
     public String toString() {
