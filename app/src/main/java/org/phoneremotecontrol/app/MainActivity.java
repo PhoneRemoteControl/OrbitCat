@@ -95,7 +95,7 @@ public class MainActivity extends ActionBarActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-        HttpServerService _httpServerService;
+        private static final String TAG = "PlaceholderFragment";
         boolean _bound = false;
         EditText portEditText;
         Switch switchState;
@@ -113,7 +113,28 @@ public class MainActivity extends ActionBarActivity {
             initInterfacesList(rootView);
             setupListeners(rootView);
 
+            // Try to bind to the service if it was already started before.
+            // In this way, widget states will be updated accordingly.
+            Intent serviceIntent = new Intent(getActivity(), HttpServerService.class);
+            getActivity().bindService(serviceIntent, mConnection, 0);
+
             return rootView;
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            getActivity().unbindService(mConnection);
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
         }
 
         private void initInterfacesList(View rootView) {
@@ -135,16 +156,17 @@ public class MainActivity extends ActionBarActivity {
             portEditText = (EditText) rootView.findViewById(R.id.edit_port);
             switchState = (Switch) rootView.findViewById(R.id.btn_state);
 
-            switchState.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            switchState.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                public void onClick(View view) {
+                    boolean isChecked = switchState.isChecked();
                     Intent serviceIntent = new Intent(getActivity(), HttpServerService.class);
                     switchState.setEnabled(false);
                     if (isChecked) {
                         // Send the port to the service
                         int port = Integer.parseInt(portEditText.getText().toString());
                         int hostId = radioGroup.getCheckedRadioButtonId();
-                        String host = (String)ipMap.values().toArray()[hostId -1];
+                        String host = (String) ipMap.values().toArray()[hostId - 1];
                         serviceIntent.putExtra("http_port", port);
                         serviceIntent.putExtra("http_host", host);
                         // Start the service and bind it to be notified if it's closed externally
@@ -160,8 +182,14 @@ public class MainActivity extends ActionBarActivity {
 
         private void refreshState() {
             switchState.setEnabled(true);
-            switchState.setChecked(_bound);
-            radioGroup.setEnabled(!_bound);
+            if (switchState.isChecked() != _bound) {
+                switchState.setChecked(_bound);
+            }
+
+            portEditText.setEnabled(!_bound);
+            for (int i = 0; i < radioGroup.getChildCount(); i++) {
+                radioGroup.getChildAt(i).setEnabled(!_bound);
+            }
         }
 
         private ServiceConnection mConnection = new ServiceConnection() {

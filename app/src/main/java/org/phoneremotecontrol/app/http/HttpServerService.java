@@ -86,7 +86,6 @@ public class HttpServerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "Starting the service...");
 
-
         copyAssetFolder(getAssets(), ROOT_DIR_SUFFIX, _rootPath.getPath());
 
         SMSHttpWorker smsWorker = new SMSHttpWorker(getApplicationContext(), "/sms");
@@ -109,7 +108,7 @@ public class HttpServerService extends Service {
     }
 
     private void showNotification() {
-        Intent stopIntent = new Intent(HttpServerService.this, HttpServerServiceStopReceiver.class);
+        Intent stopIntent = new Intent(getApplicationContext(), HttpServerServiceStopReceiver.class);
 
         Intent clickIntent = new Intent(getApplicationContext(), MainActivity.class);
         clickIntent.addCategory("android.intent.category.LAUNCHER");
