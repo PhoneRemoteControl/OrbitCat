@@ -29,11 +29,13 @@ public class Conversation {
     private long threadId;
     private long msgCount;
     private Contact contact;
+    private String snippet;
 
-    public Conversation(long threadId, long msgCount, Contact contact) {
+    public Conversation(long threadId, long msgCount, Contact contact, String snippet) {
         this.threadId = threadId;
         this.msgCount = msgCount;
         this.contact = contact;
+        this.snippet = snippet;
     }
 
     public String toString() {
@@ -45,6 +47,7 @@ public class Conversation {
         obj.put("threadId", threadId);
         obj.put("msgCount", msgCount);
         obj.put("contact", contact.toJSON());
+        obj.put("snippet", snippet);
         return obj;
     }
 
@@ -58,5 +61,9 @@ public class Conversation {
 
     public Contact getContact() {
         return contact;
+    }
+
+    public String getSnippet() {
+        return snippet;
     }
 }

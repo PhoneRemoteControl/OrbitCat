@@ -49,18 +49,19 @@ public class SMSUtils {
         List<Conversation> list = new ArrayList<Conversation>();
 
         final String[] allThreadProjections = {
-                Threads._ID, Threads.MESSAGE_COUNT, Threads.RECIPIENT_IDS
+                Threads._ID, Threads.MESSAGE_COUNT, Threads.RECIPIENT_IDS, Threads.SNIPPET
         };
         Cursor cursor = context.getContentResolver().query(Uri.parse(URI_CONVERSATIONS), allThreadProjections, null, null, null);
 
         while (cursor.moveToNext()) {
-            long threadId = cursor.getLong(0);
-            long msgCount = cursor.getLong(1);
-            long rec = cursor.getLong(2);
+            long threadId = cursor.getLong(cursor.getColumnIndex(Threads._ID));
+            long msgCount = cursor.getLong(cursor.getColumnIndex(Threads.MESSAGE_COUNT));
+            long rec = cursor.getLong(cursor.getColumnIndex(Threads.RECIPIENT_IDS));
+            String snippet = cursor.getString(cursor.getColumnIndex(Threads.SNIPPET));
 
             String phoneNumber = getNumberForId(rec, context);
             Contact contact = ContactUtils.getContactFromPhoneNumber(phoneNumber, context);
-            list.add(new Conversation(threadId, msgCount, contact));
+            list.add(new Conversation(threadId, msgCount, contact, snippet));
             Log.d(TAG, "Found " + threadId  + " " + msgCount + " " + rec);
         }
         cursor.close();

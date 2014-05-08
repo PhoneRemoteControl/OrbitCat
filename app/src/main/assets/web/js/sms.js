@@ -26,13 +26,15 @@ function updateSidebar(convList) {
 function selectConversation(newConv) {
         var previous = newConv.closest(".list-group").children(".active");
         $("img", previous).width("48");
-        $("p", previous).css("display", "none");
+        $(".selected-details", previous).css("display", "none");
+        $(".unselected-details", selected).css("display", "block");
         previous.removeClass('active'); // previous list-item
         
         var selected = $(newConv).closest(".list-group-item");
         selected.addClass('active'); // activated list-item
         $("img", selected).width("64");
-        $("p", selected).css("display", "block");
+        $(".selected-details", selected).css("display", "block");
+        $(".unselected-details", selected).css("display", "none");
 }
 
 function createConvView(conv) {
@@ -47,10 +49,11 @@ function createConvView(conv) {
     title += conv.contact.displayName;
     title += '</h4>';
     var subtitle = '';
+    subtitle += '<p class="list-group-item-text unselected-details">' + conv.snippet + '</p>';
     if (conv.contact.displayName != conv.contact.phoneNumber) {
-        subtitle += '<p class="list-group-item-text">' + conv.contact.phoneNumber + '</p>';
+        subtitle += '<p class="list-group-item-text selected-details">' + conv.contact.phoneNumber + '</p>';
     }
-    subtitle += '<p class="list-group-item-text">' + conv.msgCount + ' messages</p></div>';
+    subtitle += '<p class="list-group-item-text selected-details">' + conv.msgCount + ' messages</p></div>';
     newDiv += icon + title + subtitle + '</a>';
     return newDiv;
 }

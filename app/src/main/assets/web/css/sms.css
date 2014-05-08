@@ -33,6 +33,7 @@ body {
     height: 100%;
     overflow-y: scroll;
     float: left;
+    min-width: 200px;
 }
 
 #footer {
@@ -76,8 +77,21 @@ body {
 .contactText {
     display: inline-block;
     vertical-align: middle;
+    width: -webkit-calc(100% - 75px);
+    width: calc(100% - 75px);
+    width: -moz-calc(100% - 75px);
 }
 
 .contactText p {
     display: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
+
+.contactText h4 {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
