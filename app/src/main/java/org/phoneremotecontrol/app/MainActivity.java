@@ -33,6 +33,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -86,6 +88,7 @@ public class MainActivity extends ActionBarActivity {
         private ServiceConnection serviceConnection;
         private EditText portEditText;
         private Switch switchState;
+        private CheckBox allInterfacesCheckbox;
         private RadioGroup radioGroup;
         private Map<String, String> ipMap;
 
@@ -138,6 +141,7 @@ public class MainActivity extends ActionBarActivity {
         private void setupListeners(View rootView) {
             portEditText = (EditText) rootView.findViewById(R.id.edit_port);
             switchState = (Switch) rootView.findViewById(R.id.btn_state);
+            allInterfacesCheckbox = (CheckBox) rootView.findViewById(R.id.chk_all_interfaces);
 
             switchState.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -149,9 +153,13 @@ public class MainActivity extends ActionBarActivity {
                         // Send the port to the service
                         int port = Integer.parseInt(portEditText.getText().toString());
                         int hostId = radioGroup.getCheckedRadioButtonId();
-                        String host = (String) ipMap.values().toArray()[hostId - 1];
-                        serviceIntent.putExtra("http_port", port);
+                        String host = null;
+                        if (!allInterfacesCheckbox.isChecked()) {
+                            host = (String) ipMap.values().toArray()[hostId - 1];
+                        }
                         serviceIntent.putExtra("http_host", host);
+                        serviceIntent.putExtra("http_port", port);
+
                         // Start the service and bind it to be notified if it's closed externally
                         getActivity().getApplicationContext().startService(serviceIntent);
                         getActivity().bindService(serviceIntent, serviceConnection, 0);
@@ -159,6 +167,13 @@ public class MainActivity extends ActionBarActivity {
                     } else {
                         getActivity().getApplicationContext().stopService(serviceIntent);
                     }
+                }
+            });
+
+            allInterfacesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    refreshState();
                 }
             });
         }
@@ -191,8 +206,10 @@ public class MainActivity extends ActionBarActivity {
             }
 
             portEditText.setEnabled(!bound);
+            allInterfacesCheckbox.setEnabled(!bound);
             for (int i = 0; i < radioGroup.getChildCount(); i++) {
-                radioGroup.getChildAt(i).setEnabled(!bound);
+                boolean enable = !bound && !allInterfacesCheckbox.isChecked();
+                radioGroup.getChildAt(i).setEnabled(enable);
             }
         }
     }

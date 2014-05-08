@@ -17,4 +17,5 @@
     <string name="sms_recipient_name">Nom</string>
     <string name="sms_recipient_phone_number">Numéro de téléphone</string>
     <string name="quit">Quitter</string>
+    <string name="use_all_interfaces">Utiliser toutes les interfaces</string>
 </resources>

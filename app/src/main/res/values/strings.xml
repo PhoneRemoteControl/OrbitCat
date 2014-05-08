@@ -17,5 +17,6 @@
     <string name="sms_nb_message">Number of messages</string>
     <string name="sms_recipient_name">Name</string>
     <string name="sms_recipient_phone_number">Phone number</string>
+    <string name="use_all_interfaces">Listen on all interfaces</string>
 
 </resources>

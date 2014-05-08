@@ -41,6 +41,12 @@
             android:layout_toRightOf="@+id/textView" />
     </LinearLayout>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/use_all_interfaces"
+        android:id="@+id/chk_all_interfaces" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
