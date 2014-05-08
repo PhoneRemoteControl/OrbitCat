@@ -70,21 +70,25 @@ public class SMSUtils {
     }
 
     public static List<Message> getMessageForThread(long threadId, int number, Context context) {
+        return getMessageForThread(threadId, number, 0, context);
+    }
+
+    public static List<Message> getMessageForThread(long threadId, int number, int offset, Context context) {
         String uri = "content://sms/conversations/" + threadId;
         final String[] projection = new String[]{Telephony.Sms.DATE, Telephony.Sms.BODY, Telephony.Sms.TYPE, Telephony.Sms.SEEN};
-        Cursor cursor = context.getContentResolver().query(Uri.parse(uri), projection, null, null, null);
+        Cursor cursor = context.getContentResolver().query(Uri.parse(uri), projection, null, null, Telephony.Sms.DATE + " DESC limit " + number + " offset " + offset);
 
         List<Message> msgList = new ArrayList<Message>();
-        int cpt = 0;
 
-        while(cursor.moveToNext() && cpt < number) {
-            Date datea = new Date(cursor.getLong(0)*1000);
-            Log.d(TAG, cursor.getString(0) + " " + formatTimeStampString(context, cursor.getLong(0), true) + " " + cursor.getString(2));
-            String date = cursor.getString(0);
-            String body = cursor.getString(1);
-            Message message = new Message(date, body);
+        while(cursor.moveToNext()) {
+            long date = cursor.getLong(cursor.getColumnIndex(Telephony.Sms.DATE));
+            String formattedDate = formatTimeStampString(context, date, true);
+            String body = cursor.getString(cursor.getColumnIndex(Telephony.Sms.BODY));
+            int type = cursor.getInt(cursor.getColumnIndex(Telephony.Sms.TYPE));
+            int seen = cursor.getInt(cursor.getColumnIndex(Telephony.Sms.SEEN));
+
+            Message message = new Message(formattedDate, body, type, seen != 0);
             msgList.add(message);
-            cpt++;
         }
         cursor.close();
 

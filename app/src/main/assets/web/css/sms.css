@@ -22,10 +22,11 @@ body {
     height: -moz-calc(100% - 120px);
 }
 
-#container {
+#conversation {
     width: 70%;
     height: 100%;
     float: right;
+    overflow-y: scroll;
 }
 
 #sidebar {
@@ -42,13 +43,13 @@ body {
     background-color: #f5f5f5
 }
 
-#spinner-container {
+.spinner-container {
     height: 100%;
     width: 100%;
     text-align: center;
 }
 
-#sidebar-loading {
+#sidebar-loading, #conversation-loading {
     padding-top: 20px;
     padding-left: 20px;
     width: 100%;
@@ -95,3 +96,16 @@ body {
     overflow-x: hidden;
 }
 
+.threadId {
+    display: none;
+}
+
+.list-group-item {
+    transition: background 300ms ease;
+    -webkit-transition: background 300ms ease;
+    -moz-transition: background 300ms ease;
+}
+
+.list-group-item.active {
+    border: none;
+}

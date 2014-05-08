@@ -9,14 +9,15 @@ $(document).ready(function() {
 });
 
 function updateSidebar(convList) {
-    $("#sidebar").html("");
+    $("#sidebar > .spinner-container").css("display", "none");
+    $("#sidebar > .content").html("");
     for (var i = 0; i < convList.length; i++) {
         var convObject = convList[i];
         var convView = createConvView(convObject);
-        $("#sidebar").append(convView);
+        $("#sidebar > .content").append(convView);
     }
 
-    selectConversation($("#sidebar > .list-group-item:first"));
+    selectConversation($("#sidebar > .content > .list-group-item:first"));
     
     $('.list-group-item').on('click', function(e) {
         selectConversation($(e.target));
@@ -35,6 +36,31 @@ function selectConversation(newConv) {
         $("img", selected).width("64");
         $(".selected-details", selected).css("display", "block");
         $(".unselected-details", selected).css("display", "none");
+
+        $("#conversation > .spinner-container").css("display", "block");
+        var threadId = $(".threadId", selected).html();
+        var jsonUrl = "http://" + location.hostname + ":" + location.port + "/sms/" + threadId;
+        $.ajax({
+            url: jsonUrl
+        })
+        .done(function( data ) {
+            updateMessages(data);
+        });
+}
+
+function updateMessages(messagesList) {
+    $("#conversation > .spinner-container").css("display", "none");
+    $("#conversation > .content").html("");
+    for (var i = 0; i < messagesList.length; i++) {
+        var messageObject = messagesList[i];
+        var messageView = createMessageView(messageObject);
+        $("#conversation > .content").append(messageView);
+    }
+}
+
+function createMessageView(message) {
+    var html = "<ul><li>" + message.date + " " + message.type + "</li><li>" + message.body + "</li><li>" + message.seen + "</li></ul>";
+    return html;
 }
 
 function createConvView(conv) {
@@ -45,6 +71,7 @@ function createConvView(conv) {
     } else {
         icon = '<div class="contactIcon"><img src="../img/unknown-contact.png" width="48"/></div>'
     }
+    var id = '<div class=threadId>' + conv.threadId + '</div>';
     var title = '<div class="contactText"><h4 class="list-group-item-heading">';
     title += conv.contact.displayName;
     title += '</h4>';
@@ -54,6 +81,6 @@ function createConvView(conv) {
         subtitle += '<p class="list-group-item-text selected-details">' + conv.contact.phoneNumber + '</p>';
     }
     subtitle += '<p class="list-group-item-text selected-details">' + conv.msgCount + ' messages</p></div>';
-    newDiv += icon + title + subtitle + '</a>';
+    newDiv += icon + id + title + subtitle + '</a>';
     return newDiv;
 }

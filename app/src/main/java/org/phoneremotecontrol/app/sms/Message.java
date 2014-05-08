@@ -18,18 +18,54 @@
  */
 package org.phoneremotecontrol.app.sms;
 
+import android.provider.Telephony.Sms;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Message {
     private String date;
     private String body;
     private int type;
+    private String realType;
+    private boolean seen;
 
-    public static final int INBOX_MESSAGE = 0;
-    public static final int OUTOX_MESSAGE = 1;
-    public static final int DRAFT_MESSAGE = 2;
+    public static final String INBOX_MESSAGE = "inbox";
+    public static final String OUTBOX_MESSAGE = "outbox";
+    public static final String DRAFT_MESSAGE = "draft";
+    public static final String SENT_MESSAGE = "sent";
 
-    public Message(String date, String body) {
+    public Message(String date, String body, int type, boolean seen) {
         this.date = date;
         this.body = body;
+        this.type = type;
+        this.seen = seen;
+        realType = toRealType(type);
+    }
+
+    public String toRealType(int type) {
+        switch (type) {
+            case Sms.MESSAGE_TYPE_INBOX:
+                return INBOX_MESSAGE;
+            case Sms.MESSAGE_TYPE_OUTBOX:
+                return  OUTBOX_MESSAGE;
+            case Sms.MESSAGE_TYPE_DRAFT:
+                return DRAFT_MESSAGE;
+            case Sms.MESSAGE_TYPE_SENT:
+                return SENT_MESSAGE;
+            default:
+                return "";
+        }
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject obj = new JSONObject();
+        obj.put("date", date);
+        obj.put("body", body);
+        obj.put("type", realType);
+        obj.put("seen", seen);
+
+        return obj;
     }
     public String getDate() {
         return date;

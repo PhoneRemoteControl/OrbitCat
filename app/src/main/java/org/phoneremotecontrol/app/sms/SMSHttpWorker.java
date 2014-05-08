@@ -104,8 +104,25 @@ public class SMSHttpWorker implements HttpWorker {
     }
 
     private Response serveMessages(long id) {
-        Log.d(TAG, "Not implemented yet. Serve messages for " + id);
-        return new Response("");
+        Log.d(TAG, "Serving messages for " + id);
+
+        List<Message> messagesList = SMSUtils.getMessageForThread(id, 20, 0, context);
+        JSONArray messageArray = new JSONArray();
+
+        for (Message m : messagesList) {
+            JSONObject obj = null;
+            try {
+                obj = m.toJSON();
+            } catch (JSONException e) {
+                Log.e(TAG, "Unable to serialize JSON for " + m);
+            }
+            messageArray.put(obj);
+        }
+
+        String msg = messageArray.toString();
+        Response response = new Response(msg);
+        response.setMimeType("application/json");
+        return response;
     }
 
     @Override
