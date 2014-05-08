@@ -96,11 +96,12 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
         private static final String TAG = "PlaceholderFragment";
-        boolean bound = false;
-        EditText portEditText;
-        Switch switchState;
-        RadioGroup radioGroup;
-        Map<String, String> ipMap;
+        private boolean bound = false;
+        private ServiceConnection serviceConnection;
+        private EditText portEditText;
+        private Switch switchState;
+        private RadioGroup radioGroup;
+        private Map<String, String> ipMap;
 
         public PlaceholderFragment() {
         }
@@ -112,11 +113,7 @@ public class MainActivity extends ActionBarActivity {
 
             initInterfacesList(rootView);
             setupListeners(rootView);
-
-            // Try to bind to the service if it was already started before.
-            // In this way, widget states will be updated accordingly.
-            Intent serviceIntent = new Intent(getActivity(), HttpServerService.class);
-            getActivity().bindService(serviceIntent, mConnection, 0);
+            initServiceConnection();
 
             return rootView;
         }
@@ -124,7 +121,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            getActivity().unbindService(mConnection);
+            getActivity().unbindService(serviceConnection);
         }
 
         @Override
@@ -171,13 +168,34 @@ public class MainActivity extends ActionBarActivity {
                         serviceIntent.putExtra("http_host", host);
                         // Start the service and bind it to be notified if it's closed externally
                         getActivity().getApplicationContext().startService(serviceIntent);
-                        getActivity().bindService(serviceIntent, mConnection, 0);
+                        getActivity().bindService(serviceIntent, serviceConnection, 0);
 
                     } else {
                         getActivity().getApplicationContext().stopService(serviceIntent);
                     }
                 }
             });
+        }
+
+        private void initServiceConnection() {
+            serviceConnection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName className, IBinder service) {
+                    bound = true;
+                    refreshState();
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName arg0) {
+                    bound = false;
+                    refreshState();
+                }
+            };
+
+            // Try to bind to the service if it was already started before.
+            // In this way, widget states will be updated accordingly.
+            Intent serviceIntent = new Intent(getActivity(), HttpServerService.class);
+            getActivity().bindService(serviceIntent, serviceConnection, 0);
         }
 
         private void refreshState() {
@@ -191,21 +209,6 @@ public class MainActivity extends ActionBarActivity {
                 radioGroup.getChildAt(i).setEnabled(!bound);
             }
         }
-
-        private ServiceConnection mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                bound = true;
-                refreshState();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName arg0) {
-                bound = false;
-                refreshState();
-            }
-        };
-
     }
 
 }
