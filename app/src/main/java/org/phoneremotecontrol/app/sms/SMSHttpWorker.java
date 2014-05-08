@@ -24,7 +24,6 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.phoneremotecontrol.app.R;
 import org.phoneremotecontrol.app.contacts.Contact;
 import org.phoneremotecontrol.app.contacts.ContactException;
 import org.phoneremotecontrol.app.contacts.ContactUtils;
@@ -32,7 +31,6 @@ import org.phoneremotecontrol.app.http.HttpServerService;
 import org.phoneremotecontrol.app.http.HttpWorker;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

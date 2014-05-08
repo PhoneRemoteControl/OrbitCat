@@ -18,8 +18,6 @@
  */
 package org.phoneremotecontrol.app.sms;
 
-import org.json.JSONObject;
-
 public class Message {
     private String date;
     private String body;

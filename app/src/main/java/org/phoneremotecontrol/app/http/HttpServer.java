@@ -26,9 +26,7 @@ import android.util.Log;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.SimpleWebServer;
 
 public class HttpServer extends SimpleWebServer {

@@ -19,7 +19,6 @@
 
 package org.phoneremotecontrol.app.http;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -28,15 +27,12 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import org.phoneremotecontrol.app.MainActivity;
 import org.phoneremotecontrol.app.R;
-import org.phoneremotecontrol.app.http.HttpServer;
 import org.phoneremotecontrol.app.sms.SMSHttpWorker;
-import org.phoneremotecontrol.app.sms.SMSUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -23,7 +23,6 @@ import org.apache.http.conn.util.InetAddressUtils;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;

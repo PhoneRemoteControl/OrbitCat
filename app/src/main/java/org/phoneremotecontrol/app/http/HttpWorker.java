@@ -18,8 +18,8 @@
  */
 package org.phoneremotecontrol.app.http;
 
-import fi.iki.elonen.NanoHTTPD.Response;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 
 public interface HttpWorker {
     public abstract String getLocation();

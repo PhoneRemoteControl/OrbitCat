@@ -29,7 +29,6 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public class ContactUtils {
