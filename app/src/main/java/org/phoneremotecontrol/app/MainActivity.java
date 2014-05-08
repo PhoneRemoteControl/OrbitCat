@@ -96,7 +96,7 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
         private static final String TAG = "PlaceholderFragment";
-        boolean _bound = false;
+        boolean bound = false;
         EditText portEditText;
         Switch switchState;
         RadioGroup radioGroup;
@@ -182,26 +182,26 @@ public class MainActivity extends ActionBarActivity {
 
         private void refreshState() {
             switchState.setEnabled(true);
-            if (switchState.isChecked() != _bound) {
-                switchState.setChecked(_bound);
+            if (switchState.isChecked() != bound) {
+                switchState.setChecked(bound);
             }
 
-            portEditText.setEnabled(!_bound);
+            portEditText.setEnabled(!bound);
             for (int i = 0; i < radioGroup.getChildCount(); i++) {
-                radioGroup.getChildAt(i).setEnabled(!_bound);
+                radioGroup.getChildAt(i).setEnabled(!bound);
             }
         }
 
         private ServiceConnection mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName className, IBinder service) {
-                _bound = true;
+                bound = true;
                 refreshState();
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
-                _bound = false;
+                bound = false;
                 refreshState();
             }
         };

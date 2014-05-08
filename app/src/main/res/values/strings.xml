@@ -10,6 +10,7 @@
     <string name="http_service_notification">http_service_notification</string>
     <string name="notification_content">Tap here to configure</string>
     <string name="notification_title">OrbitCat active</string>
+    <string name="quit">Quit</string>
 
     <!-- HTML -->
     <string name="sms_list">SMS List</string>

@@ -44,35 +44,35 @@ import fi.iki.elonen.NanoHTTPD.Response;
 
 public class SMSHttpWorker implements HttpWorker {
     private static final String TAG = "SMSHttpWorker";
-    private Context _context;
-    private String _location;
-    private File _cacheDir;
-    private String _cacheLocation;
+    private Context context;
+    private String location;
+    private File cacheDir;
+    private String cacheLocation;
 
     public SMSHttpWorker(Context context, String location) {
-        _context = context;
-        _location = location;
+        this.context = context;
+        this.location = location;
         initCache();
     }
 
     @Override
     public String getLocation() {
-        return _location;
+        return location;
     }
 
     private void initCache() {
-        _cacheLocation = "/workers" + _location;
-        _cacheDir = new File(HttpServerService.getRootDir(_context), _cacheLocation);
-        _cacheDir.mkdirs();
-        Log.d(TAG, "Init cache for " + _location + " on " + _cacheDir + " at location " + _cacheLocation);
+        cacheLocation = "/workers" + location;
+        cacheDir = new File(HttpServerService.getRootDir(context), cacheLocation);
+        cacheDir.mkdirs();
+        Log.d(TAG, "Init cache for " + location + " on " + cacheDir + " at location " + cacheLocation);
     }
 
     private Response serveConversations() {
         Log.d(TAG, "Serving conversations ...");
-        List<Conversation> list = SMSUtils.getSMSThreadIds(_context);
+        List<Conversation> list = SMSUtils.getSMSThreadIds(context);
         JSONArray conversationArray = new JSONArray();
 
-        File imagePath = new File(_cacheDir, "img");
+        File imagePath = new File(cacheDir, "img");
         if (!imagePath.isDirectory()) {
             imagePath.mkdir();
         }
@@ -90,7 +90,7 @@ public class SMSHttpWorker implements HttpWorker {
                 jsonObject = c.toJSON();
 
                 if (contactImage != null) {
-                    jsonObject.put("imagePath", _cacheLocation + "/img/" + contactImage.getName());
+                    jsonObject.put("imagePath", cacheLocation + "/img/" + contactImage.getName());
                 }
             } catch (JSONException e) {
                 Log.e(TAG, "Unable to serialize JSON for " + c);
@@ -130,7 +130,7 @@ public class SMSHttpWorker implements HttpWorker {
         try {
             outFile = new File(f, c.getId() + ".jpg");
             Log.e(TAG, f.getPath() + " " + outFile);
-            InputStream in = ContactUtils.getContactPhotoStream(c, _context);
+            InputStream in = ContactUtils.getContactPhotoStream(c, context);
             if (in == null) {
                 throw new ContactException("No input stream for " + c);
             }
@@ -152,6 +152,6 @@ public class SMSHttpWorker implements HttpWorker {
     }
 
     public String toString() {
-        return "SMSHTTPWorker at " + _location;
+        return "SMSHTTPWorker at " + location;
     }
 }

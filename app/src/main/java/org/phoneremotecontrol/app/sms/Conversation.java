@@ -26,14 +26,14 @@ import org.json.JSONObject;
 import org.phoneremotecontrol.app.contacts.Contact;
 
 public class Conversation {
-    private long _threadId;
-    private long _msgCount;
-    private Contact _contact;
+    private long threadId;
+    private long msgCount;
+    private Contact contact;
 
     public Conversation(long threadId, long msgCount, Contact contact) {
-        _threadId = threadId;
-        _msgCount = msgCount;
-        _contact = contact;
+        this.threadId = threadId;
+        this.msgCount = msgCount;
+        this.contact = contact;
     }
 
     public String toString() {
@@ -42,21 +42,21 @@ public class Conversation {
 
     public JSONObject toJSON() throws JSONException {
         JSONObject obj = new JSONObject();
-        obj.put("threadId", _threadId);
-        obj.put("msgCount", _msgCount);
-        obj.put("contact", _contact.toJSON());
+        obj.put("threadId", threadId);
+        obj.put("msgCount", msgCount);
+        obj.put("contact", contact.toJSON());
         return obj;
     }
 
     public long getThreadId() {
-        return _threadId;
+        return threadId;
     }
 
     public long getMsgCount() {
-        return _msgCount;
+        return msgCount;
     }
 
     public Contact getContact() {
-        return _contact;
+        return contact;
     }
 }

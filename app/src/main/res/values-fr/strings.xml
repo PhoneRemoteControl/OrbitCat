@@ -16,4 +16,5 @@
     <string name="sms_nb_message">Nombre de messages</string>
     <string name="sms_recipient_name">Nom</string>
     <string name="sms_recipient_phone_number">Numéro de téléphone</string>
+    <string name="quit">Quitter</string>
 </resources>

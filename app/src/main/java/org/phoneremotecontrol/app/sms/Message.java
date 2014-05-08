@@ -21,8 +21,8 @@ package org.phoneremotecontrol.app.sms;
 import org.json.JSONObject;
 
 public class Message {
-    private String _date;
-    private String _body;
+    private String date;
+    private String body;
     private int type;
 
     public static final int INBOX_MESSAGE = 0;
@@ -30,14 +30,14 @@ public class Message {
     public static final int DRAFT_MESSAGE = 2;
 
     public Message(String date, String body) {
-        _date = date;
-        _body = body;
+        this.date = date;
+        this.body = body;
     }
     public String getDate() {
-        return _date;
+        return date;
     }
 
     public String getBody() {
-        return _body;
+        return body;
     }
 }

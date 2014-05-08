@@ -33,30 +33,30 @@ import fi.iki.elonen.SimpleWebServer;
 
 public class HttpServer extends SimpleWebServer {
     private static String TAG = "HttpServer";
-    private List<HttpWorker> _workerList;
+    private List<HttpWorker> workerList;
 
     public HttpServer(int port, File root) {
         super(null, port, root, true);
-        _workerList = new ArrayList<HttpWorker>();
+        workerList = new ArrayList<HttpWorker>();
         Log.d(TAG, "Initialisation of nanohttpd on port " + port + " with document root : " + root);
     }
 
     public HttpServer(int port, String host, File root) {
         super(host, port, root, true);
-        _workerList = new ArrayList<HttpWorker>();
+        workerList = new ArrayList<HttpWorker>();
         Log.d(TAG, "Initialisation of nanohttpd on host : " + host + "and port " + port + " with document root : " + root);
     }
 
     public boolean addWorker(HttpWorker worker) {
         if (worker != null && getWorkerForIdenticalLocation(worker.getLocation()) == null) {
-            _workerList.add(worker);
+            workerList.add(worker);
             return true;
         }
         return false;
     }
 
     public HttpWorker getWorkerForIdenticalLocation(String location) {
-        for (HttpWorker worker : _workerList) {
+        for (HttpWorker worker : workerList) {
             if (worker.getLocation().equals(location)) {
                 return worker;
             }
@@ -69,7 +69,7 @@ public class HttpServer extends SimpleWebServer {
         HttpWorker found = null;
 
         for (int i = splittedLocation.length; i > 0 && found == null; i--) {
-            for (HttpWorker worker : _workerList) {
+            for (HttpWorker worker : workerList) {
                 String[] splittedWorker = worker.getLocation().split("/", 0);
                 if (splittedWorker.length == i) {
                     boolean match = true;

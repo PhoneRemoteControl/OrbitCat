@@ -47,11 +47,11 @@ import java.io.OutputStream;
 public class HttpServerService extends Service {
     public static final String TAG = "HttpServerService";
     private static final String ROOT_DIR_SUFFIX = "web";
-    private File _rootPath;
+    private File rootPath;
 
-    private HttpServer _httpServer;
-    private NotificationManager _notificationManager;
-    private final IBinder _binder = new LocalBinder();
+    private HttpServer httpServer;
+    private NotificationManager notificationManager;
+    private final IBinder binder = new LocalBinder();
 
     public static File getRootDir(Context context) {
         return new File(context.getCacheDir() + "/" + ROOT_DIR_SUFFIX);
@@ -63,38 +63,36 @@ public class HttpServerService extends Service {
 
     @Override
     public void onCreate() {
-        _rootPath = getRootDir();
-        _notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        rootPath = getRootDir();
+        notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         showNotification();
-
-
     }
 
     @Override
     public void onDestroy() {
         Log.e(TAG, "Stopping the service ...");
-        _httpServer.stop();
-        removeDirectory(_rootPath);
-        closeNotif();
+        httpServer.stop();
+        removeDirectory(rootPath);
+        closeNotification();
     }
 
-    private void closeNotif() {
-        _notificationManager.cancel(R.string.http_service_notification);
+    private void closeNotification() {
+        notificationManager.cancel(R.string.http_service_notification);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "Starting the service...");
 
-        copyAssetFolder(getAssets(), ROOT_DIR_SUFFIX, _rootPath.getPath());
+        copyAssetFolder(getAssets(), ROOT_DIR_SUFFIX, rootPath.getPath());
 
         SMSHttpWorker smsWorker = new SMSHttpWorker(getApplicationContext(), "/sms");
         int port = intent.getIntExtra("http_port", 9999);
         String host = intent.getStringExtra("http_host");
-        _httpServer = new HttpServer(port, host, getRootDir());
-        _httpServer.addWorker(smsWorker);
+        httpServer = new HttpServer(port, host, getRootDir());
+        httpServer.addWorker(smsWorker);
         try {
-            _httpServer.start();
+            httpServer.start();
         } catch (IOException e) {
             Log.e(TAG, "IOException while starting the http server.");
         }
@@ -104,7 +102,7 @@ public class HttpServerService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return _binder;
+        return binder;
     }
 
     private void showNotification() {
@@ -122,12 +120,12 @@ public class HttpServerService extends Service {
                 .setContentTitle(getString(R.string.notification_title))
                 .setContentIntent(contentIntent)
                 .setSmallIcon(R.drawable.app_icon)
-                .addAction(R.drawable.quit2, "Quitter", stopPendingIntent)
+                .addAction(R.drawable.quit2, getString(R.string.quit), stopPendingIntent)
                 .setOngoing(true)
                 .setContentText(getString(R.string.notification_content));
 
         // Send the notification.
-        _notificationManager.notify(R.string.http_service_notification, builder.build());
+        notificationManager.notify(R.string.http_service_notification, builder.build());
     }
 
     private boolean copyAssetFolder(AssetManager assetManager,

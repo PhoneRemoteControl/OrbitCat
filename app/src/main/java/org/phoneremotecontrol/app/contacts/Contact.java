@@ -25,51 +25,41 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Contact {
-    private long _id;
-    private String _phoneNumber;
-    private String _displayName;
-    private String _photoUri;
+    private long id;
+    private String phoneNumber;
+    private String displayName;
 
     public Contact(long id, String phoneNumber, String displayName) {
-        _id = id;
-        _phoneNumber = phoneNumber;
-        _displayName = displayName;
+        this.id = id;
+        this.phoneNumber = phoneNumber;
+        this.displayName = displayName;
     }
 
     public Contact(String phoneNumber, String displayName) {
-        _phoneNumber = phoneNumber;
-        _displayName = displayName;
+        this.phoneNumber = phoneNumber;
+        this.displayName = displayName;
     }
 
     public long getId() {
-        return _id;
+        return id;
     }
 
     public String getPhoneNumber() {
-        return _phoneNumber;
+        return phoneNumber;
     }
 
     public String getDisplayName() {
-        return _displayName;
-    }
-
-
-    public String getPhotoUri() {
-        return _photoUri;
-    }
-
-    public void setPhotoUri(String photoPath) {
-        this._photoUri = photoPath;
+        return displayName;
     }
 
     public String toString() {
-        return "[phoneNumber = " + _phoneNumber + ", displayName  = " + _displayName + "]";
+        return "[phoneNumber = " + phoneNumber + ", displayName  = " + displayName + "]";
     }
 
     public JSONObject toJSON() throws JSONException {
         JSONObject obj = new JSONObject();
-        obj.put("phoneNumber", _phoneNumber);
-        obj.put("displayName", _displayName);
+        obj.put("phoneNumber", phoneNumber);
+        obj.put("displayName", displayName);
         return obj;
     }
 }
